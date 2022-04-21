@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -32,25 +33,20 @@ public class CourseClient {
 
     public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable){
         List<CourseDto> searchResult = null;
-        ResponseEntity<ResponsePageDto<CourseDto>> result = null;
         String url =  REQUEST_URL_COURSE + utilsService.createUrlGetAllCoursesByUser(userId, pageable);//Chama serviço que cria a URL.
         log.debug("Request URL: {} ", url);
         log.info("Request URL: {} ", url);
 
         try {
             ParameterizedTypeReference<ResponsePageDto<CourseDto>> responseType = new ParameterizedTypeReference<ResponsePageDto<CourseDto>>() {};//Classe abastrata do spring core, para definir parametrização.
-            result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
+            ResponseEntity<ResponsePageDto<CourseDto>> result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
             searchResult = result.getBody().getContent();//Extraimos o getbody e getContent de result.
             log.debug("Response Number of Elements: {} ", searchResult.size());//Exibe no log o tamanho do retorno da busca
         }catch (HttpStatusCodeException e){
             log.error("Error request /courses {} ", e);
         }
         log.info("Ending request /courses userId {} ", userId);
-        return result.getBody();
+        return new PageImpl<>(searchResult);
     }
 
-    public void deleteUserInCourse(UUID userId) {
-        String url = REQUEST_URL_COURSE + "/courses/users/" + userId;
-        restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
-    }
 }
