@@ -63,7 +63,7 @@ public class UserController {
         if(!userModelOptional.isPresent()){ //Se o objeto não estiver presente, entra no IF.
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         } else{
-            userService.delete(userModelOptional.get());
+            userService.deleteUser(userModelOptional.get());
             log.debug("DELETE deleteUser userId saved {} ", userId);//Definindo para aparecer o log do valor contido em userModel.
             log.info("User deleted successfully userId {} ", userId);
             return ResponseEntity.status(HttpStatus.OK).body("User deleted success");
@@ -85,7 +85,7 @@ public class UserController {
             userModel.setPhoneNumber(userDto.getPhoneNumber());
             userModel.setCpf(userDto.getCpf());
             userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userService.save(userModel);
+            userService.updateUser(userModel);
             log.debug("PUT updateUser userModel userId {} ", userModel.getUserId());//Definindo para aparecer o log do valor contido em userModel.userId.
             log.info("User updated successfully userId {} ", userModel.getUserId());
             return ResponseEntity.status(HttpStatus.OK).body(userModel);
@@ -107,7 +107,7 @@ public class UserController {
             var userModel =  userModelOptional.get();
             userModel.setPassword(userDto.getPassword());
             userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userService.save(userModel);
+            userService.updatePassword(userModel);
             log.debug("PUT updatePassword userId saved {} ", userModel.getUserId());//Definindo para aparecer o log do valor contido em userModel.userId.
             log.info("Password updated successfully userId {} ", userModel.getUserId());
             return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully.");
@@ -125,7 +125,7 @@ public class UserController {
             var userModel =  userModelOptional.get();
             userModel.setImageUrl(userDto.getImageUrl());
             userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userService.save(userModel);
+            userService.updateUser(userModel);
             log.debug("PUT updateImage userId saved {} ", userModel.getUserId());//Definindo para aparecer o log do valor contido em userModel.userId.
             log.info("User updated successfully userId {} ", userModel.getUserId());
             return ResponseEntity.status(HttpStatus.OK).body(userModel);
