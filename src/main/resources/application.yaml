@@ -26,6 +26,9 @@ spring:
     ansi:
       enabled: always #Define para aparecer as cores dos logs no console do Windows também(padrão ANSI de cores).
 
+  rabbitmq:
+    addresses: amqps://asepknsw:AkZI1YjGQhqp8qSAFcm56tHkiXyiOjiE@shark.rmq.cloudamqp.com/asepknsw #Endereço do rabbitMq para comunicação com a instancia do Broker.
+
 logging:
   level:
     com.ead: TRACE #Define o nível de log que será utilizado na aplicação.
@@ -37,7 +40,9 @@ ead:
   api:
     url:
       course: 'http://ead-course-service/ead-course' #Define URL do microservice course. Nesse caso passamos o Id Eureka correspondente ao microservice desejado.
-
+  broker:
+    exchange:
+      userEvent: ead.userevent #Define o nome do Exchange, para as outras filas se conectarem com esse exchange para receber mensagens.
 eureka: #Configurações do Eureka
   client:
     service-url:
