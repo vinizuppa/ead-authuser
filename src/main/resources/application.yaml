@@ -49,3 +49,10 @@ eureka: #Configurações do Eureka
       defaultZone: 'http://localhost:8761/eureka' #Endereço onde o eureka server está
   instance:
       hostname: localhost
+
+resilience4j:
+  retry:
+    instances:
+      retryInstance:
+        maxRetryAttempts: 3 #Limite máximo de tentativas
+        waitDuration: 5 #Duração entre uma tentativa e outra.
