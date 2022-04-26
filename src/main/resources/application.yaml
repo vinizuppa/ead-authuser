@@ -51,6 +51,16 @@ eureka: #Configurações do Eureka
       hostname: localhost
 
 resilience4j:
+  circuitbreaker:
+    instances:
+      circuitbreakerInstance:
+        slidingWindowSize: 30 #Periodo que irá ser analisado pelo CircuitBreacker(30 segundos).
+        permittedNumberOfCallsInHalfOpenState: 2 #Número de requisições que irão ficar em estado MEIO ABERTO.
+        slidingWindowType: TIME_BASED #Define que o CircuitBreacker ira se basear em tempo.(Pode ser definido para funcionar por tempo, ou por contagens).
+        minimumNumberOfCalls: 2 #Limite de chamadas para iniciar analise.
+        waitDurationInOpenState: 30s #Periodo que o estado ira ficar em ABERTO.
+        failureRateThreshold: 80 #Taxa de falha, para no periodo de analise do Circuit Breacker, caso 80% ou mais das chamadas tenha dado sucesso ou erro, define o estado(aberto ou fechado).
+
   retry:
     instances:
       retryInstance:

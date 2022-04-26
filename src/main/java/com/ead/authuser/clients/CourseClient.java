@@ -3,6 +3,7 @@ package com.ead.authuser.clients;
 import com.ead.authuser.dtos.CourseDto;
 import com.ead.authuser.dtos.ResponsePageDto;
 import com.ead.authuser.services.UtilsService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +35,8 @@ public class CourseClient {
     String REQUEST_URL_COURSE;
 
     //@Retry(name = "retryInstance")
+//    @CircuitBreaker(name = "circuitbreakerInstance", fallbackMethod = "circuitbreakerfallback")//Anotação que utilizar nesse metodo o CircuitBreaker definido no application.yaml  //fallbackMethod define algo padrão a ser executado quando a janela estiver Aberta, como por exemplo uma mensagem padrão.
+    @CircuitBreaker(name = "circuitbreakerInstance")
     public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable){
         List<CourseDto> searchResult = null;
         String url =  REQUEST_URL_COURSE + utilsService.createUrlGetAllCoursesByUser(userId, pageable);//Chama serviço que cria a URL.
@@ -48,6 +52,12 @@ public class CourseClient {
             log.error("Error request /courses {} ", e);
         }
         log.info("Ending request /courses userId {} ", userId);
+        return new PageImpl<>(searchResult);
+    }
+
+    public Page<CourseDto> circuitbreakerfallback(UUID userId, Pageable pageable, Throwable t){//Metodo que será chamado, quando o circuitBreaker chamar o fallback.
+        log.error("Inside circuit breaker fallback, cause - {}", t.toString());
+        List<CourseDto> searchResult = new ArrayList<>();//Cria paginação vazia.
         return new PageImpl<>(searchResult);
     }
 
