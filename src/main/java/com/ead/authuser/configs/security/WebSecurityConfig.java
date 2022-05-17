@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {//Lista de URIs que poderão ser acessadas sem autenticação
-        "/ead-authuser/auth/**"
+        "/auth/**"
     };
 
 
