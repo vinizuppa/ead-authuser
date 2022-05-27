@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Component
@@ -19,16 +20,23 @@ public class JwtProvider { //Classe que gera o token JWT
     private int jwtExpirationMs;
 
     public String generateJwt(Authentication authentication){
-        UserDetails userPrincipal = (UserDetailsImp) authentication.getPrincipal();
+        UserDetailsImp userPrincipal = (UserDetailsImp) authentication.getPrincipal();
+
+        final String roles = userPrincipal.getAuthorities().stream()//Extraindo roles do userPrincipal
+                .map(role -> {
+                    return role.getAuthority();
+                }).collect(Collectors.joining(","));//Junta a listagem obtida e tranforma em uma string, delimitando cada role com ,
+
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject((userPrincipal.getUserId().toString()))
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
-    public String getUsernameJwt(String token){//Recebe o token e extrai o username pelo token recebido.
+    public String getSubjetJwt(String token){//Recebe o token e extrai o uuid pelo token recebido.
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 

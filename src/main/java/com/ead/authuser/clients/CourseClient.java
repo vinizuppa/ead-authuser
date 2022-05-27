@@ -12,6 +12,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -37,20 +39,20 @@ public class CourseClient {
     //@Retry(name = "retryInstance")
 //    @CircuitBreaker(name = "circuitbreakerInstance", fallbackMethod = "circuitbreakerfallback")//Anotação que utilizar nesse metodo o CircuitBreaker definido no application.yaml  //fallbackMethod define algo padrão a ser executado quando a janela estiver Aberta, como por exemplo uma mensagem padrão.
     @CircuitBreaker(name = "circuitbreakerInstance")
-    public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable){
+    public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable, String token){
         List<CourseDto> searchResult = null;
         String url =  REQUEST_URL_COURSE + utilsService.createUrlGetAllCoursesByUser(userId, pageable);//Chama serviço que cria a URL.
+        HttpHeaders headers = new HttpHeaders();//Iniciamos o header
+        headers.set("Authorization", token);//Setamos o header que recebemos como parametro no metodo
+        HttpEntity<String> requestEntity = new HttpEntity<String>("parameters", headers);//Esse request Entity precisaremos passar no restTemplate(linha 53).
         log.debug("Request URL: {} ", url);
         log.info("Request URL: {} ", url);
 
-        try {
             ParameterizedTypeReference<ResponsePageDto<CourseDto>> responseType = new ParameterizedTypeReference<ResponsePageDto<CourseDto>>() {};//Classe abastrata do spring core, para definir parametrização.
-            ResponseEntity<ResponsePageDto<CourseDto>> result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
+            ResponseEntity<ResponsePageDto<CourseDto>> result = restTemplate.exchange(url, HttpMethod.GET, requestEntity, responseType);
             searchResult = result.getBody().getContent();//Extraimos o getbody e getContent de result.
             log.debug("Response Number of Elements: {} ", searchResult.size());//Exibe no log o tamanho do retorno da busca
-        }catch (HttpStatusCodeException e){
-            log.error("Error request /courses {} ", e);
-        }
+
         log.info("Ending request /courses userId {} ", userId);
         return new PageImpl<>(searchResult);
     }

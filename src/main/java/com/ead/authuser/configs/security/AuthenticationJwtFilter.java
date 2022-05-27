@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @Log4j2
 public class AuthenticationJwtFilter extends OncePerRequestFilter {//Intercepta as requisições e faz verificações, se estive tudo correto libera para o disparchet servlet
@@ -29,8 +30,8 @@ public class AuthenticationJwtFilter extends OncePerRequestFilter {//Intercepta 
         try{
             String jwtStr = getTokenHeader(request);//Obtemos token da requisição
             if (jwtStr != null && jwtProvider.validateJwt(jwtStr)){
-                String username = jwtProvider.getUsernameJwt(jwtStr);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                String userId = jwtProvider.getSubjetJwt(jwtStr);
+                UserDetails userDetails = userDetailsService.loadUserById(UUID.fromString(userId));//UUID.fromString converte o id string para tipo UUID.
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

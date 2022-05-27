@@ -42,7 +42,7 @@ public class UserController {
     @Autowired
     AuthenticationCurrentUserService authenticationCurrentUserService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STUDENT')")//Define que somente usuários com permissão da ROLE passada na anotação podem utilizar esse End-Point, levando em consideração a hierarquia definida em WebSecurityConfig.
+    @PreAuthorize("hasAnyRole('ADMIN')")//Define que somente usuários com permissão da ROLE passada na anotação podem utilizar esse End-Point, levando em consideração a hierarquia definida em WebSecurityConfig.
     @GetMapping
     public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec,
                                                        @PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC)Pageable pageable,

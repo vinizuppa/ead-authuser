@@ -21,4 +21,6 @@ public interface UserRepository extends JpaRepository<UserModel, UUID>, JpaSpeci
     @EntityGraph(attributePaths = "roles", type = EntityGraph.EntityGraphType.FETCH)//Anotação para definir que determinado atributo em uma determinada consulta, ira utilizar o Fetch invés do Lazy.
     Optional<UserModel> findByUsername(String username);
 
+    @EntityGraph(attributePaths = "roles", type = EntityGraph.EntityGraphType.FETCH)//Anotação para definir que determinado atributo em uma determinada consulta, ira utilizar o Fetch invés do Lazy.
+    Optional<UserModel> findById(UUID userId);
 }
