@@ -33,11 +33,11 @@ public class CourseClient {
     @Autowired
     UtilsService utilsService;
 
-    @Value("${ead.api.url.course}")//Capta a URL definida no application.yaml
+    @Value("${ead.api.url.course}")//Capta a URL definida no application-dev.yaml
     String REQUEST_URL_COURSE;
 
     //@Retry(name = "retryInstance")
-//    @CircuitBreaker(name = "circuitbreakerInstance", fallbackMethod = "circuitbreakerfallback")//Anotação que utilizar nesse metodo o CircuitBreaker definido no application.yaml  //fallbackMethod define algo padrão a ser executado quando a janela estiver Aberta, como por exemplo uma mensagem padrão.
+//    @CircuitBreaker(name = "circuitbreakerInstance", fallbackMethod = "circuitbreakerfallback")//Anotação que utilizar nesse metodo o CircuitBreaker definido no application-dev.yaml  //fallbackMethod define algo padrão a ser executado quando a janela estiver Aberta, como por exemplo uma mensagem padrão.
     @CircuitBreaker(name = "circuitbreakerInstance")
     public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable, String token){
         List<CourseDto> searchResult = null;

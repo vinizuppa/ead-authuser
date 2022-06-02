@@ -12,7 +12,7 @@ public class UserEventPublisher {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
-    @Value(value = "${ead.broker.exchange.userEvent}")//Pega o valor definido no application.yaml
+    @Value(value = "${ead.broker.exchange.userEvent}")//Pega o valor definido no application-dev.yaml
     private String exchangeUserEvent;
 
     public void publishUserEvent(UserEventDto userEventDto, ActionType actionType){//Publica eventos no RabbitMq.

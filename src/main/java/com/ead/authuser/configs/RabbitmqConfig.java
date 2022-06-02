@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitmqConfig {//Classe de configuração do rabbitMq
     @Autowired
-    CachingConnectionFactory cachingConnectionFactory;//Responsável por conectar microservice com o RabbitMq. Ele leva em consideração o endereço que inserimos no application.yaml
+    CachingConnectionFactory cachingConnectionFactory;//Responsável por conectar microservice com o RabbitMq. Ele leva em consideração o endereço que inserimos no application-dev.yaml
 
-    @Value(value = "${ead.broker.exchange.userEvent}")//Pega o valor definido no application.yaml
+    @Value(value = "${ead.broker.exchange.userEvent}")//Pega o valor definido no application-dev.yaml
     private String exchangeUserEvent;
 
     @Bean

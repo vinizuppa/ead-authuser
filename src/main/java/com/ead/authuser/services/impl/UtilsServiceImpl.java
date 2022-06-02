@@ -10,7 +10,7 @@ import java.util.UUID;
 @Service
 public class UtilsServiceImpl implements UtilsService {
 
-    @Value("${ead.api.url.course}")//Capta a URL definida no application.yaml
+    @Value("${ead.api.url.course}")//Capta a URL definida no application-dev.yaml
     String REQUEST_URL_COURSE;
 
     public String createUrlGetAllCoursesByUser(UUID userId, Pageable pageable){
