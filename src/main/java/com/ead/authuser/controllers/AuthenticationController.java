@@ -85,6 +85,37 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
 
+    @PostMapping("/signup/admin/usr")
+    public ResponseEntity<Object> registerUserAdmin(@RequestBody @Validated(UserDto.UserView.RegistrationPost.class)
+                                               @JsonView(UserDto.UserView.RegistrationPost.class) UserDto userDto){
+        log.debug("POST registerUser userDto received {} ", userDto.toString());//Definindo para aparecer o log do valor contido em userDto.
+        if (userService.existsByUsername(userDto.getUsername())){ //Verifica se o usuário existe no Banco de dados pelo Username.
+            log.warn("Username {} is Already Taken! ", userDto.getUsername());//Definindo para aparecer o log de WARN.
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
+        }
+        if (userService.existsByEmail(userDto.getEmail())){ //Verifica se o usuário existe no Banco de dados pelo Email.
+            log.warn("Email {} is Already Taken! ", userDto.getEmail());//Definindo para aparecer o log de WARN.
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
+        }
+
+        RoleModel roleModel = roleService.findByRoleName(RoleType.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Error: Role is Not Found."));//Verifica se a Role existe, caso não, lança uma exceção.
+
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));//Criptografa senha que vem no DTO, antes de salva-la no banco.
+        var userModel = new UserModel(); // Instancia um userModel
+        BeanUtils.copyProperties(userDto, userModel);
+        userModel.setUserStatus(UserStatus.ACTIVE);
+        userModel.setUserType(UserType.ADMIN);
+        userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        userModel.getRoles().add(roleModel);
+        userService.saveUser(userModel);
+        log.debug("POST registerUser userId saved {} ", userModel.getUserId());//Definindo para aparecer o log do valor contido em userModel.
+        log.info("User saved successfully userId {} ", userModel.getUserId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<JwtDto> authenticateUser(@Valid @RequestBody LoginDto loginDto){//retorna o JWT token
         Authentication authentication = authenticationManager.authenticate(
